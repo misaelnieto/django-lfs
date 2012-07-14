@@ -4093,7 +4093,7 @@ msgstr "Mostrar tipo"
 
 #: templates/manage/product/variants.html:278
 msgid "Change variant display type"
-msgstr "Borrar tipo mostrado de variante"
+msgstr "Cambiar tipo mostrado de variante"
 
 #: templates/manage/product_taxes/add_tax.html:4
 #: templates/manage/product_taxes/add_tax.html:12

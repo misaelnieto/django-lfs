@@ -3556,7 +3556,7 @@ msgstr "Campo múltiple"
 
 #: templates/manage/static_block/static_block.html:26
 msgid "Add Static Block"
-msgstr "Añadir Bloque Estátito"
+msgstr "Añadir Bloque Estático"
 
 #: templates/manage/tax/add_tax.html:22 templates/manage/tax/add_tax.html:30
 #: templates/manage/tax/tax.html:45
