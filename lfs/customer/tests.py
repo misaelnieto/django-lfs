@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 
 # lfs imports
-from lfs.customer.models import Address
+from lfs.addresses.models import Address
 from lfs.core.models import Country
 from lfs.core.models import Shop
 from lfs.customer.models import CreditCard
@@ -18,11 +18,11 @@ from lfs.payment.models import PaymentMethod
 class CreditCardTestCase(TestCase):
     def setUp(self):
         self.cc = CreditCard(
-            type = "mastercard",
-            owner = "John Doe",
-            number = "4711",
-            expiration_date_month = 8,
-            expiration_date_year = 2012
+            type="mastercard",
+            owner="John Doe",
+            number="4711",
+            expiration_date_month=8,
+            expiration_date_year=2012
         )
 
     def test_unicode(self):
@@ -111,9 +111,6 @@ class AddressTestCase(TestCase):
             selected_invoice_address=self.address2,
         )
 
-    def test_unicode(self):
-        self.assertEqual(self.address1.__unicode__(), u"%s / %s" % (self.address1.line1, self.address1.city))
-
     def test_address_page(self):
         """
         Tests that we can see a shipping and an invoice address
@@ -169,20 +166,22 @@ class AddressTestCase(TestCase):
         self.assertNotEquals(our_customer.selected_shipping_address, None)
 
         # see if we can view the addresss page
-        address_data = {'invoice_firstname': 'Joe', 'invoice_lastname': 'Bloggs',
-                        'invoice-line1': 'de company name', 'invoice-line2': 'de street',
-                        'invoice-city': 'Dallas', 'invoice-state': 'TX',
-                        'invoice-code': '84003', 'invoice-country': 'US',
-
-                        'shipping_firstname': 'Joe', 'shipping_lastname': 'Bloggs',
-                        'shipping-line1': 'de company name', 'shipping-line2': 'de street',
-                        'shipping-city': 'Dallas', 'shipping-state': 'TX',
-                        'shipping-code': '84003', 'shipping-country': 'US', }
+        address_data = {
+            'invoice-firstname': 'Joe', 'invoice-lastname': 'Bloggs',
+            'invoice-line1': 'de company name', 'invoice-line2': 'de street',
+            'invoice-city': 'Dallas', 'invoice-state': 'TX',
+            'invoice-code': '84003', 'invoice-country': 'US',
+            'invoice-phone': '+49 4711 4711', 'invoice-email': 'joe.bloggs@acme.com',
+            'shipping-firstname': 'Joe', 'shipping-lastname': 'Bloggs',
+            'shipping-line1': 'de company name', 'shipping-line2': 'de street',
+            'shipping-city': 'Dallas', 'shipping-state': 'TX',
+            'shipping-code': '84003', 'shipping-country': 'US',
+            'shipping-phone': '+49 4712 4712', 'invoice-email': 'joe.bloggs@acme.com',
+        }
 
         address_response = self.client.post(reverse('lfs_my_addresses'), address_data)
 
         self.assertEquals(Address.objects.count(), 4)
-        self.assertRedirects(address_response, reverse('lfs_my_addresses'), status_code=302, target_status_code=200,)
 
         # refetch our user from the database
         our_customer = Customer.objects.get(user=our_user)

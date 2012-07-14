@@ -26,7 +26,7 @@ from lfs.order.models import Order
 
 
 # Views
-@permission_required("core.manage_shop", login_url="/login/")
+@permission_required("core.manage_shop")
 def customer(request, customer_id, template_name="manage/customer/customer.html"):
     """Base view to display the customer with passed customer id.
     """
@@ -37,7 +37,7 @@ def customer(request, customer_id, template_name="manage/customer/customer.html"
     }))
 
 
-@permission_required("core.manage_shop", login_url="/login/")
+@permission_required("core.manage_shop")
 def customers(request, template_name="manage/customer/customers.html"):
     """Base view to display the customers overview.
     """
@@ -98,7 +98,7 @@ def customers_filters_inline(request, template_name="manage/customer/customers_f
     }))
 
 
-@permission_required("core.manage_shop", login_url="/login/")
+@permission_required("core.manage_shop")
 def customer_inline(request, customer_id, template_name="manage/customer/customer_inline.html"):
     """Displays customer with provided customer id.
     """
@@ -123,15 +123,27 @@ def customer_inline(request, customer_id, template_name="manage/customer/custome
 
         cart_price = cart.get_price_gross(request) + shipping_costs["price"] + payment_costs["price"]
 
+    if customer.selected_shipping_address:
+        shipping_address = customer.selected_shipping_address.as_html(request, "shipping")
+    else:
+        shipping_address = None
+
+    if customer.selected_invoice_address:
+        invoice_address = customer.selected_invoice_address.as_html(request, "invoice")
+    else:
+        invoice_address = None
+
     return render_to_string(template_name, RequestContext(request, {
         "customer": customer,
         "orders": orders,
         "cart": cart,
         "cart_price": cart_price,
+        "shipping_address": shipping_address,
+        "invoice_address": invoice_address,
     }))
 
 
-@permission_required("core.manage_shop", login_url="/login/")
+@permission_required("core.manage_shop")
 def customers_inline(request, template_name="manage/customer/customers_inline.html"):
     """Displays carts overview.
     """
@@ -170,7 +182,7 @@ def customers_inline(request, template_name="manage/customer/customers_inline.ht
     }))
 
 
-@permission_required("core.manage_shop", login_url="/login/")
+@permission_required("core.manage_shop")
 def selectable_customers_inline(request, customer_id, template_name="manage/customer/selectable_customers_inline.html"):
     """Display selectable customers.
     """
@@ -195,7 +207,7 @@ def selectable_customers_inline(request, customer_id, template_name="manage/cust
 
 
 # Actions
-@permission_required("core.manage_shop", login_url="/login/")
+@permission_required("core.manage_shop")
 def set_selectable_customers_page(request):
     """Sets the page of the selectable customers sections.
     """
@@ -210,7 +222,7 @@ def set_selectable_customers_page(request):
     return HttpResponse(result)
 
 
-@permission_required("core.manage_shop", login_url="/login/")
+@permission_required("core.manage_shop")
 def set_customers_page(request):
     """Sets the page of the selectable customers sections.
     """
@@ -224,7 +236,7 @@ def set_customers_page(request):
     return HttpResponse(result)
 
 
-@permission_required("core.manage_shop", login_url="/login/")
+@permission_required("core.manage_shop")
 def set_ordering(request, ordering):
     """Sets customer ordering given by passed request.
     """
@@ -260,7 +272,7 @@ def set_ordering(request, ordering):
     return HttpResponse(result)
 
 
-@permission_required("core.manage_shop", login_url="/login/")
+@permission_required("core.manage_shop")
 def set_customer_filters(request):
     """Sets customer filters given by passed request.
     """
@@ -293,7 +305,7 @@ def set_customer_filters(request):
     return HttpResponse(result)
 
 
-@permission_required("core.manage_shop", login_url="/login/")
+@permission_required("core.manage_shop")
 def reset_customer_filters(request):
     """Resets all customer filters.
     """
@@ -327,13 +339,13 @@ def _get_filtered_customers(request, customer_filters):
     customer_ordering = request.session.get("customer-ordering", "id")
     customer_ordering_order = request.session.get("customer-ordering-order", "")
 
-    customers = Customer.objects.exclude(selected_invoice_address=None)
+    customers = Customer.objects.exclude(sa_object_id=None)
 
     # Filter
     name = customer_filters.get("name", "")
     if name != "":
-        f = Q(selected_invoice_address__lastname__icontains=name)
-        f |= Q(selected_invoice_address__firstname__icontains=name)
+        f = Q(sa_object_id__lastname__icontains=name)
+        f |= Q(sa_object_id__firstname__icontains=name)
         customers = customers.filter(f)
 
     # Ordering

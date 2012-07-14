@@ -257,10 +257,7 @@ def add_to_cart(request, product_id=None):
 
                 if property.is_number_field:
                     try:
-                        if isinstance(value, unicode):
-                            # atof() on unicode string fails in some environments, like Czech
-                            value = value.encode("utf-8")
-                        value = locale.atof(value)
+                        value = lfs.core.utils.atof(value)
                     except ValueError:
                         value = locale.atof("0.0")
 
@@ -288,7 +285,7 @@ def add_to_cart(request, product_id=None):
                         return lfs.core.utils.set_message_cookie(
                             product.get_absolute_url(), msg)
 
-    if product.active_packing_unit:
+    if product.get_active_packing_unit():
         quantity = product.get_amount_by_packages(quantity)
 
     cart = cart_utils.get_or_create_cart(request)
@@ -415,7 +412,7 @@ def refresh_cart(request):
                 message = _(u"Sorry, but '%(product)s' is only %(amount)s times available.") % {"product": item.product.name, "amount": amount}
 
 
-        if item.product.active_packing_unit:
+        if item.product.get_active_packing_unit():
             item.amount = item.product.get_amount_by_packages(float(amount))
         else:
             item.amount = amount

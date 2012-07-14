@@ -27,6 +27,7 @@ Concepts
 
    user/concepts/products.rst
    user/concepts/categories.rst
+   user/concepts/manufacturers.rst
    user/concepts/criteria.rst
    user/concepts/properties.rst
    user/concepts/local_properties.rst
@@ -114,6 +115,7 @@ How-tos
 .. toctree::
    :maxdepth: 1
 
+   developer/howtos/how_to_add_own_addresses/index.rst
    developer/howtos/how_to_add_own_templates.rst
    developer/howtos/how_to_add_own_payment_methods.rst
    developer/howtos/how_to_add_product_pricing.rst
